@@ -5,9 +5,15 @@ import { useCart } from "@/context/CartContext";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { useEffect } from "react";
 
 const Checkout = () => {
   const { items, totalPrice } = useCart();
+
+  // Add effect to scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">
