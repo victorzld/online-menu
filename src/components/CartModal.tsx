@@ -24,6 +24,8 @@ const CartModal = () => {
 
   const handleCheckout = () => {
     setIsOpen(false);
+    // Scroll to top before navigation
+    window.scrollTo(0, 0);
     navigate("/checkout");
   };
 
