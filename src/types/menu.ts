@@ -16,4 +16,5 @@ export interface CustomerInfo {
   address: string;
   phone: string;
   notes?: string;
+  paymentMethod?: "credito" | "debito" | "pix" | "dinheiro";
 }
