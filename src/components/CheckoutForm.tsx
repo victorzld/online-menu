@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { CustomerInfo } from "@/types/menu";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const CheckoutForm = () => {
   const { items, totalPrice, clearCart } = useCart();
@@ -18,6 +19,7 @@ const CheckoutForm = () => {
     address: "",
     phone: "",
     notes: "",
+    paymentMethod: "credito", // Default payment method
   });
 
   const handleChange = (
@@ -30,27 +32,37 @@ const CheckoutForm = () => {
     }));
   };
 
+  const handlePaymentMethodChange = (
+    value: "credito" | "debito" | "pix" | "dinheiro"
+  ) => {
+    setCustomerInfo((prev) => ({
+      ...prev,
+      paymentMethod: value,
+    }));
+  };
+
   const formatOrderForWhatsApp = () => {
     const whatsappNumber = "";
-    let message = `*New Order*\n\n`;
-    message += `*Customer Information:*\n`;
-    message += `Name: ${customerInfo.name}\n`;
-    message += `Address: ${customerInfo.address}\n`;
-    message += `Phone: ${customerInfo.phone}\n`;
+    let message = `*Novo Pedido*\n\n`;
+    message += `*Informações sobre o pedido:*\n`;
+    message += `Nome: ${customerInfo.name}\n`;
+    message += `Endereço: ${customerInfo.address}\n`;
+    message += `Celular: ${customerInfo.phone}\n`;
+    message += `Método de Pagamento: ${customerInfo.paymentMethod}\n`;
 
     if (customerInfo.notes) {
-      message += `Notes: ${customerInfo.notes}\n`;
+      message += `Informações adicionais : ${customerInfo.notes}\n`;
     }
 
-    message += `\n*Order Details:*\n\n`;
+    message += `\n*Pedido:*\n\n`;
 
     items.forEach((item) => {
-      message += `${item.quantity}x ${item.name} - $${(
+      message += `${item.quantity}x ${item.name} - R$${(
         item.price * item.quantity
       ).toFixed(2)}\n`;
     });
 
-    message += `\n*Total: $${totalPrice.toFixed(2)}*`;
+    message += `\n*Total: R$${totalPrice.toFixed(2)}*`;
 
     return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
       message
@@ -72,7 +84,7 @@ const CheckoutForm = () => {
 
     clearCart();
     toast({
-      title: "Order sent!",
+      title: "Pedido Enviado!",
       description: "Seu pedido foi enviado via WhatsApp para nosso número!",
     });
 
@@ -115,6 +127,36 @@ const CheckoutForm = () => {
           onChange={handleChange}
           required
         />
+      </div>
+
+      <div className="space-y-3">
+        <Label className="font-semibold">Método de Pagamento:</Label>
+        <RadioGroup
+          defaultValue="credito"
+          value={customerInfo.paymentMethod}
+          onValueChange={handlePaymentMethodChange}
+          className="flex flex-col space-y-2"
+        >
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="credito" id="credito" />
+            <Label htmlFor="credito">Cartão de Crédito</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="debito" id="debito" />
+            <Label htmlFor="debito">Cartão de Débito</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="pix" id="pix" />
+            <Label htmlFor="pix">PIX</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="dinheiro" id="dinheiro" />
+            <Label htmlFor="dinheiro">Dinheiro</Label>
+          </div>
+        </RadioGroup>
+        <p className="text-sm font-light text-zinc-800">
+          · O pagamento é feito na entrega ·
+        </p>
       </div>
 
       <div className="space-y-2">
